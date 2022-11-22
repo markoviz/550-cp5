@@ -193,7 +193,8 @@ module processor(
 	 // foe bex
 	 assign temp_q4 = bex_mux ? a_shrink_t : temp_q3;
 	 
-	 ////// need assign temp_qx to q first
+	 //assign temp_q to q
+	 assign q = temp_q4;
 	 assign address_imem = q;
 	 
 	 
