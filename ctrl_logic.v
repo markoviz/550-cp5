@@ -1,12 +1,12 @@
-module ctrl_logic (op, ctrl, addi_signal); //change andisignal 
+module ctrl_logic (op, ctrl, addi_signal, sw_signal, lw_signal); //change andisignal 
     input [4:0] op;
 	 output [14:0] ctrl;
-	 output addi_signal;
+	 output addi_signal, sw_signal, lw_signal;
 	
 	
 
 	wire a1, a2, a3, a4,a5;
-	wire and1;
+	wire and1, and2;
 	
 
 	assign a1 = ~op[4] & ~ op[3] & ~op[2] & ~op[1] & ~op[0];//add
@@ -22,13 +22,20 @@ module ctrl_logic (op, ctrl, addi_signal); //change andisignal
 	assign a11 =  op[4] &  ~op[3] &  op[2] & ~op[1] &  op[0];//setx
 	
 
-
 	
 	
-	// aluinb, dmwe, rwe, rdst, rwd
-	assign ctrl = a1 ? 000000000000100: a2 ? 000000000010110: a3 ? 000000000010111: a4 ? 000000000111001 : a5 ? 000001000000100: a6 ? 000000001011100 : a7 ? 000001110000100: a8 ? 000010000001100 : a9 ? 000100001011100: a10 ? 001101001000100 :a11 ?110000000000100 : 15'b0;
+	//setx, r30, all0, rsmux, pc2_signal, pc1_signal, jal_signal, r31, br, dmwe, aluinb, dmwe[o], rwe, rdst, rwd
+	assign ctrl = a1 ? 000000000000100: a2 ? 000000000010110: a3 ? 000000000010111: a4 ? 000000000111001 : a5 ? 000001000000100: a6 ? 000000001001100 : a7 ? 000001110000100: a8 ? 000010000001100 : a9 ? 000100001001100: a10 ? 001100001000100 :a11 ?110000000000100 : 15'b0;
 	and (and1, op[2], op[0]);
 	and (addi_signal, and1, ~op[1]);
-   
 	
+	//for sw
+	and (and2, op[0], op[1]);
+	and (sw_signal, and2, op[2]);
+	
+	//for lw
+	assign lw_signal = op[3];
+   
+
 endmodule 
+
