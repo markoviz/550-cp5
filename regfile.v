@@ -28,8 +28,6 @@ module regfile(
 	assign register4 = registers[4];
 	assign register5 = registers[5];
 	assign register6 = registers[6];
-   assign register30 = registers[30];
-	assign register31 = registers[31];
 	assign register7 = registers[7];
 	assign register8 = registers[8];
 	assign register9 = registers[9];
@@ -53,6 +51,8 @@ module regfile(
 	assign register27 = registers[27];
 	assign register28 = registers[28];
 	assign register29 = registers[29];
+	assign register30 = registers[30];
+	assign register31 = registers[31];
  // line 18-56
 	
 	

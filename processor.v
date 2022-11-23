@@ -148,6 +148,7 @@ module processor(
 	 wire isNotEqual1, isLessThan1, overflow1;
 	 wire [31:0] bne_extend, temp_q_extend, pc_alu_result;
 	
+	 ////line151-198
 	 ///assign d = q + 12'd1;
 	 rca r1(q, 12'd1, 0, cout, d);
 	 //get t for j and jal
@@ -162,10 +163,10 @@ module processor(
 	 
 	 and(bex_mux, isNotEqual, ctrl_logic_code[6]);//for bex instruction
 	 
-	 pc_12 pc1(temp_q, d, clock, 1'b1, reset);
+	 ///pc_12 pc1(temp_q, d, clock, 1'b1, reset);
 	 
 	 //select for j type
-	 assign temp_q1 = pc1_signal ? a_shrink_t : temp_q;
+	 assign temp_q1 = pc1_signal ? a_shrink_t : d;
 	 
 	 //jal for data_writereg
 	 wire jal_signal;
@@ -176,7 +177,7 @@ module processor(
 	 //select for bne, br
 	 wire [11:0] temp_q2;
 	 signextend17 s101(q_imem[16:0], bne_extend);
-	 signextend12 s102(temp_q, temp_q_extend);
+	 signextend12 s102(d, temp_q_extend);
 	 
 	 alu a1(bne_extend, temp_q_extend, 5'd0, 5'd0, pc_alu_result, isNotEqual1, isLessThan1, overflow1);
 	 
@@ -190,13 +191,17 @@ module processor(
 	 assign temp_data_readRegB = data_readRegB[11:0];
 	 assign temp_q3 = pc2_signal ? temp_data_readRegB : temp_q2;
 	 
-	 // foe bex
+	 // for bex
 	 assign temp_q4 = bex_mux ? a_shrink_t : temp_q3;
 	 
 	 //assign temp_q to q
-	 assign q = temp_q4;
+	 pc_12 pc1(q, temp_q4, clock, 1'b1, reset);
 	 assign address_imem = q;
+	
+
 	 
+	 
+	 	
 	 
 	 //dmem
 	 assign address_dmem = alu1out[11:0];///
