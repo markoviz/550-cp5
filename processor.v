@@ -72,7 +72,7 @@ module processor(
     data_readRegB,                  // I: Data from port B of regfile
 	 
 	 alu1out, mux1out, signout, rwdout, dmwe2,
-	 bne_extend, temp_q_extend, pc_alu_result, temp_q2_1, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
+	 bne_extend, temp_q_extend, pc_alu_result, temp_q2, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
 );
     // Control signals data_operandA
     input clock, reset;
@@ -102,7 +102,7 @@ module processor(
     //regfile
     //address_dmem
 	 
-	 wire [15:0] ctrl_logic_code;
+	 wire [16:0] ctrl_logic_code;
 	 wire addi_signal;
 	 wire sw_signal;
 	 wire lw_signal;
@@ -165,7 +165,7 @@ module processor(
 	 and (reverse_isLessThan, isNotEqual, ~isLessThan);
 	 and (blt_mux, reverse_isLessThan, ctrl_logic_code[15]);//for blt instruction
 	 
-	 and (bex_mux, isNotEqual, ctrl_logic_code[6]);//for bex instruction
+	 and (bex_mux, isNotEqual, ctrl_logic_code[16]);//for bex instruction
 	 
 	 ///pc_12 pc1(temp_q, d, clock, 1'b1, reset);
 	 
@@ -179,7 +179,7 @@ module processor(
 	 
 	 
 	 //select for bne
-	 wire [11:0] temp_q2;//////
+	 output [11:0] temp_q2;//////
 	 signextend17 s101(q_imem[16:0], bne_extend);
 	 signextend12 s102(d, temp_q_extend);
 	 
@@ -189,7 +189,7 @@ module processor(
 	 assign temp_q2 = bne_mux ? pc_alu_result_shrink : temp_q1;
 	 
 	 //select for blt
-	 output [11:0] temp_q2_1;
+	 wire [11:0] temp_q2_1;
 	 
 	 assign temp_q2_1 = blt_mux ? pc_alu_result_shrink : temp_q2;
 	 

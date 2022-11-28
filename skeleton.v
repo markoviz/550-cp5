@@ -11,12 +11,14 @@
 
 module skeleton(clock, reset, imem_clock, dmem_clock, processor_clock, regfile_clock, address_imem,q_imem,address_dmem,data,wren,q_dmem,ctrl_writeEnable,
 					 ctrl_writeReg, ctrl_readRegA, ctrl_readRegB,data_writeReg,data_readRegA, data_readRegB,
-   register0, register1, register2, register3, register4, register5, register6, register7,
-	register8, register9, register10, register11, register12, register13, register14, register15,
-	register16, register17, register18, register19, register20, register21, register22, register23,
-	register24, register25, register26, register27, register28, register29, register30, register31, alu1out, mux1out, signout, rwdout, dmwe2,
-	bne_extend, temp_q_extend, pc_alu_result, temp_q2_1, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
+   
+	alu1out, mux1out, signout, rwdout, dmwe2,
+	bne_extend, temp_q_extend, pc_alu_result, temp_q2, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
 	);
+	///register0, register1, register2, register3, register4, register5, register6, register7,
+	///register8, register9, register10, register11, register12, register13, register14, register15,
+	///register16, register17, register18, register19, register20, register21, register22, register23,
+	///register24, register25, register26, register27, register28, register29, register30, register31,
     input clock, reset;
     /* 
         Create four clocks for each module from the original input "clock".
@@ -29,7 +31,7 @@ module skeleton(clock, reset, imem_clock, dmem_clock, processor_clock, regfile_c
 	 output [31:0] signout, mux1out, alu1out, rwdout;///
 	 output dmwe2;
 	 output [31:0] bne_extend, temp_q_extend, pc_alu_result;
-	 output [11:0] temp_q2_1, temp_q3, temp_q4;
+	 output [11:0] temp_q2, temp_q3, temp_q4;
 	 output reverse_isLessThan, blt_mux, isLessThan;
 					 
     
@@ -79,7 +81,8 @@ module skeleton(clock, reset, imem_clock, dmem_clock, processor_clock, regfile_c
     output [31:0] data_writeReg;
     output [31:0] data_readRegA, data_readRegB;
 	 
-	 output [31:0] register0, register1, register2, register3, register4, register5, register6, register7,
+	 ///////
+	 wire [31:0] register0, register1, register2, register3, register4, register5, register6, register7,
 	register8, register9, register10, register11, register12, register13, register14, register15,
 	register16, register17, register18, register19, register20, register21, register22, register23,
 	register24, register25, register26, register27, register28, register29, register30, register31;
@@ -128,7 +131,7 @@ module skeleton(clock, reset, imem_clock, dmem_clock, processor_clock, regfile_c
         data_readRegB,                  // I: Data from port B of regfile
 		  
 		  alu1out, mux1out, signout, rwdout, dmwe2, bne_extend, temp_q_extend, pc_alu_result,
-		  temp_q2_1, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
+		  temp_q2, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
     );
 
 endmodule
