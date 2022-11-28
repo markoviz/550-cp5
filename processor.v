@@ -71,7 +71,8 @@ module processor(
     data_readRegA,                  // I: Data from port A of regfile
     data_readRegB,                  // I: Data from port B of regfile
 	 
-	 alu1out, mux1out, signout, rwdout, dmwe2
+	 alu1out, mux1out, signout, rwdout, dmwe2,
+	 bne_extend, temp_q_extend, pc_alu_result, temp_q2_1, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
 );
     // Control signals data_operandA
     input clock, reset;
@@ -101,7 +102,7 @@ module processor(
     //regfile
     //address_dmem
 	 
-	 wire [14:0] ctrl_logic_code;
+	 wire [15:0] ctrl_logic_code;
 	 wire addi_signal;
 	 wire sw_signal;
 	 wire lw_signal;
@@ -127,7 +128,8 @@ module processor(
 	 assign mux1out = all0 ? 32'd0 : temp_mux1out;
 	 
 	 
-	 wire isNotEqual, isLessThan, overflow, itype_signal;///
+	 wire isNotEqual, overflow, itype_signal;///
+	 output isLessThan;
 	 wire [4:0] alu_opcode;
 	 
 	 //assign addi, sw, lw aluopcode = 00000
@@ -146,22 +148,24 @@ module processor(
 	 wire pc1_signal, bne_mux;
 	 wire cout;
 	 wire isNotEqual1, isLessThan1, overflow1;
-	 wire [31:0] bne_extend, temp_q_extend, pc_alu_result;
+	 output [31:0] bne_extend, temp_q_extend, pc_alu_result;///
 	
-	 ////line151-198
+	 
 	 ///assign d = q + 12'd1;
 	 rca r1(q, 12'd1, 0, cout, d);
 	 //get t for j and jal
 	 assign a_shrink_t = q_imem[11:0];
 	 assign pc1_signal = ctrl_logic_code[9];
 	 
-	 //get pc+n+1
-	 wire bne_blt, true_isLessThan, bex_mux;
-	 and (true_isLessThan, isNotEqual, ~isLessThan);
-	 or (bne_blt, isNotEqual, true_isLessThan);
-	 and (bne_mux, bne_blt, ctrl_logic_code[6]);//br
+	 //get pc+n+1 for bne and blt
+	 wire bex_mux, blt_mux1;
+	 output reverse_isLessThan, blt_mux;
+	 and(bne_mux, isNotEqual, ctrl_logic_code[6]);//for bne instruction
 	 
-	 and(bex_mux, isNotEqual, ctrl_logic_code[6]);//for bex instruction
+	 and (reverse_isLessThan, isNotEqual, ~isLessThan);
+	 and (blt_mux, reverse_isLessThan, ctrl_logic_code[15]);//for blt instruction
+	 
+	 and (bex_mux, isNotEqual, ctrl_logic_code[6]);//for bex instruction
 	 
 	 ///pc_12 pc1(temp_q, d, clock, 1'b1, reset);
 	 
@@ -174,8 +178,8 @@ module processor(
 	 assign jal_signal = ctrl_logic_code[8];
 	 
 	 
-	 //select for bne, br
-	 wire [11:0] temp_q2;
+	 //select for bne
+	 wire [11:0] temp_q2;//////
 	 signextend17 s101(q_imem[16:0], bne_extend);
 	 signextend12 s102(d, temp_q_extend);
 	 
@@ -184,12 +188,19 @@ module processor(
 	 assign pc_alu_result_shrink = pc_alu_result[11:0];
 	 assign temp_q2 = bne_mux ? pc_alu_result_shrink : temp_q1;
 	 
+	 //select for blt
+	 output [11:0] temp_q2_1;
+	 
+	 assign temp_q2_1 = blt_mux ? pc_alu_result_shrink : temp_q2;
+	 
+	 
 	 // select for jr
-	 wire [11:0] temp_data_readRegB, temp_q3, temp_q4;
+	 wire [11:0] temp_data_readRegB;
+	 output [11:0] temp_q3, temp_q4;
 	 wire pc2_signal;
 	 assign pc2_signal = ctrl_logic_code[10];
 	 assign temp_data_readRegB = data_readRegB[11:0];
-	 assign temp_q3 = pc2_signal ? temp_data_readRegB : temp_q2;
+	 assign temp_q3 = pc2_signal ? temp_data_readRegB : temp_q2_1;
 	 
 	 // for bex
 	 assign temp_q4 = bex_mux ? a_shrink_t : temp_q3;
