@@ -1,14 +1,14 @@
 module regfile(
 	clock, ctrl_writeEnable, ctrl_reset, ctrl_writeReg,
 	ctrl_readRegA, ctrl_readRegB, data_writeReg, data_readRegA,
-	data_readRegB
-	
+	data_readRegB,
+	register0, register1, register2, register3, register4, register5, register6, register7,
+	register8, register9, register10, register11, register12, register13, register14, register15,
+	register16, register17, register18, register19, register20, register21, register22, register23,
+	register24, register25, register26, register27, register28, register29, register30, register31
 		
 );
-///register0, register1, register2, register3, register4, register5, register6, register7,
-	///register8, register9, register10, register11, register12, register13, register14, register15,
-	///register16, register17, register18, register19, register20, register21, register22, register23,
-	///register24, register25, register26, register27, register28, register29, register30, register31
+
 	input clock, ctrl_writeEnable, ctrl_reset;
 	input [4:0] ctrl_writeReg, ctrl_readRegA, ctrl_readRegB;
 	input [31:0] data_writeReg;

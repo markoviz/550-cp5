@@ -69,12 +69,13 @@ module processor(
     ctrl_readRegB,                  // O: Register to read from port B of regfile
     data_writeReg,                  // O: Data to write to for regfile
     data_readRegA,                  // I: Data from port A of regfile
-    data_readRegB,                  // I: Data from port B of regfile
+    data_readRegB,                   // I: Data from port B of regfile
 	 
 	 alu1out, mux1out, signout, rwdout, dmwe2,
 	 bne_extend, temp_q_extend, pc_alu_result, temp_q2, temp_q3, temp_q4, reverse_isLessThan, blt_mux, isLessThan
 );
-    // Control signals data_operandA
+    
+	 // Control signals data_operandA
     input clock, reset;
 
     // Imem
@@ -102,17 +103,18 @@ module processor(
     //regfile
     //address_dmem
 	 
+	 
 	 wire [16:0] ctrl_logic_code;
 	 wire addi_signal;
 	 wire sw_signal;
 	 wire lw_signal;
+	 
 	 
 	 ctrl_logic ctr(q_imem[31:27], ctrl_logic_code, addi_signal, sw_signal, lw_signal);// output [4:0] ctrl_logic;
 	 
 	 output [31:0] signout;
 	 
 	 signextend17 s100(q_imem[16:0], signout);
-	 
 	 
 	 
 	 output [31:0]alu1out;
@@ -158,7 +160,7 @@ module processor(
 	 assign pc1_signal = ctrl_logic_code[9];
 	 
 	 //get pc+n+1 for bne and blt
-	 wire bex_mux, blt_mux1;
+	 wire bex_mux;
 	 output reverse_isLessThan, blt_mux;
 	 and(bne_mux, isNotEqual, ctrl_logic_code[6]);//for bne instruction
 	 
@@ -259,6 +261,7 @@ module processor(
 	 assign setx_signal = ctrl_logic_code[14];
 	 signextend27 s105(q_imem[26:0], a_extend_t);
 	 assign data_writeReg = setx_signal ? a_extend_t : temp_data_writeReg2;
+
 	 
 	 
 	 //bex choose for ctrl_readrega
@@ -272,7 +275,8 @@ module processor(
 	 assign ctrl_readRegB = ctrl_logic_code[3] ?  q_imem[26:22] : q_imem[16:12]; //rt
 	 
 	 wire [4:0] temp_rd;
-	 wire [4:0] temp_ctrl_writeReg, temp_ctrl_writeReg1, temp_ctrl_writeReg2;
+	 wire [4:0] temp_ctrl_writeReg, temp_ctrl_writeReg1;
+	 wire [4:0] temp_ctrl_writeReg2;
 	 wire r31;
 	 assign temp_rd = q_imem[26: 22]; // temp_rd
 	 
